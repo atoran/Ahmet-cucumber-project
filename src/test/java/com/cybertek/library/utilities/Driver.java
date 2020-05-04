@@ -22,17 +22,15 @@ public class Driver {
     }
 
     private static ThreadLocal<WebDriver> driverPool = new ThreadLocal<>();
+    private static ChromeOptions chromeOptions;
+    private  static FirefoxOptions firefoxOptions;
+    private static URL url;
 
 
     public static WebDriver getDriver() {
         if (driverPool.get() == null) {
 
-            // check the command line argument browser. if it has value, use that value
-            // if no browser value is passed from command line, the user properties file
-            // mvn test -Dbrowser=remote-chrome
-            // mvn test -Dbrowser=remote-firefox
-            // mvn test -Dcucumber.filter.tags=@regression -Dbrowser=remote-firefox
-            String browser = System.getProperty("browser") != null ? System.getProperty("browser") : ConfigurationReader.getProperty("browser");
+            String browser = ConfigurationReader.getProperty("browser");
 
             switch (browser) {
                 case "chrome":
@@ -73,18 +71,18 @@ public class Driver {
                     break;
 
                 case "remote-chrome":
+                    chromeOptions = new ChromeOptions();
                     try {
-                        URL url = new URL("http://54.161.125.141:4444/wd/hub");
-                        ChromeOptions chromeOptions = new ChromeOptions();
+                        url = new URL("http://54.92.228.138:4444/wd/hub");
                         driverPool.set(new RemoteWebDriver(url, chromeOptions));
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
                     }
                     break;
                 case "remote-firefox":
+                    firefoxOptions = new FirefoxOptions();
                     try {
-                        URL url = new URL("http://54.161.125.141:4444/wd/hub");
-                        FirefoxOptions firefoxOptions = new FirefoxOptions();
+                        url = new URL("http://54.92.228.138:4444/wd/hub");
                         driverPool.set(new RemoteWebDriver(url, firefoxOptions));
                     } catch (MalformedURLException e) {
                         e.printStackTrace();
